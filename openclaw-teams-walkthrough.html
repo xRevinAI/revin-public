@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw × Teams Setup Walkthrough</title>
+  <style>
+    #auth-overlay {
+      position: fixed; inset: 0; background: #0d1117;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #auth-box {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 12px; padding: 40px; width: 360px; text-align: center;
+    }
+    #auth-box h2 { color: #e6edf3; margin: 0 0 8px; font-size: 20px; }
+    #auth-box p { color: #8b949e; font-size: 14px; margin: 0 0 24px; }
+    #auth-box input {
+      width: 100%; box-sizing: border-box; padding: 10px 14px;
+      border-radius: 6px; border: 1px solid #30363d; background: #0d1117;
+      color: #e6edf3; font-size: 15px; margin-bottom: 12px; outline: none;
+    }
+    #auth-box input:focus { border-color: #00c7b1; }
+    #auth-box button {
+      width: 100%; padding: 10px; background: #00c7b1; color: #0d1117;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    #auth-box button:hover { opacity: 0.85; }
+    #auth-error { color: #f85149; font-size: 13px; margin-top: 8px; display: none; }
+    #protected-content { display: none; }
+  </style>
+</head>
+<body>
+<div id="auth-overlay">
+  <div id="auth-box">
+    <h2>🔒 Protected</h2>
+    <p>Enter the password to continue.</p>
+    <input type="password" id="pw-input" placeholder="Password" autofocus
+      onkeydown="if(event.key==='Enter') checkAuth()">
+    <button onclick="checkAuth()">Unlock →</button>
+    <div id="auth-error">Incorrect password.</div>
+  </div>
+</div>
+<div id="protected-content"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw × Teams Setup Walkthrough</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #7dd3fc;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #38bdf8;
+      margin: 2rem 0 0.75rem;
+      border-left: 4px solid #38bdf8;
+      padding-left: 0.75rem;
+    }
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin: 1.25rem 0 0.5rem;
+    }
+    p { margin-bottom: 0.75rem; color: #cbd5e1; }
+    ul, ol { margin: 0.5rem 0 0.75rem 1.5rem; color: #cbd5e1; }
+    li { margin-bottom: 0.4rem; }
+    code {
+      background: #1e293b;
+      color: #7dd3fc;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", "Fira Code", monospace;
+      font-size: 0.88em;
+    }
+    pre {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 0.75rem 0 1rem;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: #a3e635;
+      font-size: 0.85rem;
+    }
+    .badge {
+      display: inline-block;
+      background: #1e3a5f;
+      color: #7dd3fc;
+      border: 1px solid #38bdf8;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.7rem;
+      margin-right: 0.4rem;
+      font-weight: 600;
+    }
+    .step {
+      background: #161d2e;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .step-num {
+      display: inline-block;
+      background: #38bdf8;
+      color: #0f1117;
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      text-align: center;
+      line-height: 28px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-right: 0.6rem;
+    }
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .callout {
+      background: #1a2e1a;
+      border-left: 4px solid #4ade80;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      color: #86efac;
+      font-size: 0.9rem;
+    }
+    .warn {
+      background: #2d1f00;
+      border-left: 4px solid #fbbf24;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      color: #fde68a;
+      font-size: 0.9rem;
+    }
+    .arch-diagram {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 1.25rem;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+      color: #475569;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .toc {
+      background: #161d2e;
+      border: 1px solid #1e3a5f;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .toc ul { margin-left: 1rem; }
+    .toc li { margin-bottom: 0.3rem; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>⚡ OpenClaw × Microsoft Teams</h1>
+  <p class="subtitle">Setup walkthrough — reactive webhook bot that responds in real-time</p>
+
+  <div class="toc">
+    <h3 style="color:#e2e8f0; margin-top:0;">📋 Table of Contents</h3>
+    <ul>
+      <li><a href="#arch">Architecture Overview</a></li>
+      <li><a href="#prereqs">Prerequisites</a></li>
+      <li><a href="#azure">Step 1 — Azure Bot Registration</a></li>
+      <li><a href="#tunnel">Step 2 — Cloudflare Tunnel</a></li>
+      <li><a href="#openclaw">Step 3 — OpenClaw Config</a></li>
+      <li><a href="#teams">Step 4 — Add Bot to Teams</a></li>
+      <li><a href="#oauth">Step 5 — Subscription OAuth Tokens (Alt Mode)</a></li>
+      <li><a href="#tips">Tips &amp; Gotchas</a></li>
+    </ul>
+  </div>
+
+  <!-- ARCH -->
+  <h2 id="arch">🏗️ Architecture Overview</h2>
+  <p>The setup uses a <strong>push-based webhook</strong> — Teams pushes messages to your bot the instant they're sent, instead of polling on a timer. This is why response times are near-instant.</p>
+
+  <div class="arch-diagram">Teams Message
+      │
+      ▼
+  Azure Bot Service  ──► validates App ID + Secret
+      │
+      ▼
+  Cloudflare Tunnel   ──► teams.yourdomain.com  (public HTTPS)
+      │
+      ▼
+  OpenClaw (localhost)  ──► processes message, calls Claude/GPT
+      │
+      ▼
+  Response sent back via Bot Service API  ──► appears in Teams</div>
+
+  <p>No open firewall ports. No polling delay. Works from a laptop, home server, or any machine running OpenClaw.</p>
+
+  <!-- PREREQS -->
+  <h2 id="prereqs">✅ Prerequisites</h2>
+  <ul>
+    <li><strong>OpenClaw installed</strong> — <a href="https://docs.openclaw.ai" target="_blank">docs.openclaw.ai</a></li>
+    <li><strong>Azure account</strong> — free tier works</li>
+    <li><strong>Cloudflare account</strong> — free tier works; <code>cloudflared</code> CLI installed</li>
+    <li><strong>A domain on Cloudflare</strong> (or use the free <code>*.trycloudflare.com</code> tunnel for testing)</li>
+  </ul>
+
+  <!-- AZURE -->
+  <h2 id="azure">Step 1 — Azure Bot Registration</h2>
+
+  <div class="step">
+    <span class="step-num">1</span><span class="step-title">Create a Bot resource in Azure</span>
+    <ol style="margin-top:0.75rem">
+      <li>Go to <a href="https://portal.azure.com" target="_blank">portal.azure.com</a></li>
+      <li>Search for <strong>Azure Bot</strong> and click Create</li>
+      <li>Choose <strong>Multi Tenant</strong> app type</li>
+      <li>Let Azure auto-create a new Microsoft App ID (or bring your own)</li>
+      <li>Complete creation — note down the <strong>App ID</strong></li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span><span class="step-title">Get your Client Secret</span>
+    <ol style="margin-top:0.75rem">
+      <li>In the Bot resource → <strong>Configuration</strong> → click "Manage Password" link</li>
+      <li>Under <strong>Certificates &amp; secrets</strong>, create a new client secret</li>
+      <li>Copy the secret value immediately — you won't see it again</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <span class="step-num">3</span><span class="step-title">Set the Messaging Endpoint</span>
+    <ol style="margin-top:0.75rem">
+      <li>Back in the Bot resource → <strong>Configuration</strong></li>
+      <li>Set <strong>Messaging endpoint</strong> to:<br/>
+        <code>https://teams.yourdomain.com/api/messages</code>
+      </li>
+      <li>Save</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <span class="step-num">4</span><span class="step-title">Enable the Teams Channel</span>
+    <ol style="margin-top:0.75rem">
+      <li>In the Bot resource → <strong>Channels</strong></li>
+      <li>Click <strong>Microsoft Teams</strong> and enable it</li>
+      <li>Accept the terms, save</li>
+    </ol>
+  </div>
+
+  <!-- TUNNEL -->
+  <h2 id="tunnel">Step 2 — Cloudflare Tunnel</h2>
+  <p>This exposes OpenClaw's local webhook server to the public internet via Cloudflare, with no open ports required.</p>
+
+  <div class="step">
+    <span class="step-num">1</span><span class="step-title">Install cloudflared</span>
+    <pre><code># macOS
+brew install cloudflare/cloudflare/cloudflared
+
+# Login
+cloudflared tunnel login</code></pre>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span><span class="step-title">Create a named tunnel</span>
+    <pre><code>cloudflared tunnel create openclaw-teams</code></pre>
+    <p style="margin-top:0.5rem">This generates a tunnel ID and credential file at <code>~/.cloudflared/&lt;UUID&gt;.json</code></p>
+  </div>
+
+  <div class="step">
+    <span class="step-num">3</span><span class="step-title">Configure the tunnel</span>
+    <p>Create <code>~/.cloudflared/config.yml</code>:</p>
+    <pre><code>tunnel: &lt;your-tunnel-UUID&gt;
+credentials-file: /Users/yourname/.cloudflared/&lt;UUID&gt;.json
+
+ingress:
+  - hostname: teams.yourdomain.com
+    service: http://localhost:3978
+  - service: http_status:404</code></pre>
+    <div class="callout">Port 3978 is the default OpenClaw/Bot Framework port. Adjust if yours differs.</div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">4</span><span class="step-title">Add DNS record in Cloudflare</span>
+    <pre><code>cloudflared tunnel route dns openclaw-teams teams.yourdomain.com</code></pre>
+  </div>
+
+  <div class="step">
+    <span class="step-num">5</span><span class="step-title">Start the tunnel (or run as a service)</span>
+    <pre><code># One-off
+cloudflared tunnel run openclaw-teams
+
+# Install as macOS launchd service (auto-starts on boot)
+sudo cloudflared service install</code></pre>
+  </div>
+
+  <!-- OPENCLAW CONFIG -->
+  <h2 id="openclaw">Step 3 — OpenClaw Config</h2>
+  <p>Add the Teams plugin to your OpenClaw config. The config file is typically at <code>~/.openclaw/config.yml</code> or wherever OpenClaw stores its config on your system.</p>
+
+  <pre><code>plugins:
+  entries:
+    msteams:
+      enabled: true
+      config:
+        appId: "YOUR_AZURE_APP_ID"
+        appPassword: "YOUR_CLIENT_SECRET"
+        tenantId: "YOUR_TENANT_ID"   # optional for single-tenant
+</code></pre>
+
+  <div class="callout">
+    Run <code>openclaw gateway restart</code> after changing config to reload the plugin.
+  </div>
+
+  <div class="warn">
+    Keep <code>appPassword</code> out of version control. Use environment variables or a secrets manager in production.
+  </div>
+
+  <p>Verify the gateway is running and Teams is connected:</p>
+  <pre><code>openclaw gateway status
+openclaw status</code></pre>
+
+  <!-- TEAMS -->
+  <h2 id="teams">Step 4 — Add Bot to Teams Chat</h2>
+  <p>The bot can't join chats on its own — it needs to be manually added by a human (this is a Teams permission model constraint).</p>
+
+  <div class="step">
+    <span class="step-num">1</span><span class="step-title">Publish the bot (optional for internal use)</span>
+    <p>For internal org use you can sideload the bot without App Store submission. In Teams Admin Center → <strong>Teams apps → Manage apps</strong> → Upload an app.</p>
+    <p>App manifest minimum:</p>
+    <pre><code>{
+  "manifestVersion": "1.1",
+  "id": "YOUR_AZURE_APP_ID",
+  "version": "1.0.0",
+  "packageName": "com.yourorg.openclaw",
+  "developer": { "name": "Your Org", "websiteUrl": "https://yourdomain.com",
+                  "privacyUrl": "https://yourdomain.com", "termsOfUseUrl": "https://yourdomain.com" },
+  "name": { "short": "Revin", "full": "Revin AI Assistant" },
+  "description": { "short": "AI assistant", "full": "OpenClaw-powered AI assistant" },
+  "icons": { "color": "color.png", "outline": "outline.png" },
+  "accentColor": "#0078D4",
+  "bots": [{
+    "botId": "YOUR_AZURE_APP_ID",
+    "scopes": ["personal", "team", "groupChat"],
+    "isNotificationOnly": false
+  }],
+  "permissions": ["identity", "messageTeamMembers"]
+}</code></pre>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span><span class="step-title">Add to a chat or channel</span>
+    <ol style="margin-top:0.75rem">
+      <li>Open the group chat or channel in Teams</li>
+      <li>Click the <strong>+</strong> / "Add people" or "Add tab" button</li>
+      <li>Search for your bot by name and add it</li>
+      <li>Send a message — the bot will respond via webhook</li>
+    </ol>
+  </div>
+
+  <!-- OAUTH -->
+  <h2 id="oauth">Step 5 — Subscription OAuth Tokens (Alternative Mode)</h2>
+  <p>This is an alternative approach that uses your <strong>Microsoft 365 subscription OAuth tokens</strong> instead of a Bot Framework App ID/Secret. Useful when you want the agent to act as a licensed M365 user rather than a bot identity.</p>
+
+  <div class="step">
+    <span class="step-num">1</span><span class="step-title">Register an app in Entra ID (Azure AD)</span>
+    <ol style="margin-top:0.75rem">
+      <li>Go to <a href="https://entra.microsoft.com" target="_blank">entra.microsoft.com</a> → App registrations → New registration</li>
+      <li>Set redirect URI to <code>http://localhost:3000/auth/callback</code> (or wherever OpenClaw handles OAuth)</li>
+      <li>Under <strong>API Permissions</strong>, add:<br/>
+        <code>Chat.ReadWrite</code>, <code>ChatMessage.Send</code>, <code>User.Read</code>
+      </li>
+      <li>Grant admin consent</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <span class="step-num">2</span><span class="step-title">Get your OAuth tokens</span>
+    <p>OpenClaw will walk you through an OAuth flow to get an access + refresh token tied to your M365 account. These tokens act as <em>you</em> in Teams.</p>
+    <pre><code>openclaw auth add msteams --oauth</code></pre>
+    <div class="callout">Check <code>openclaw help</code> for the exact auth command syntax on your version.</div>
+  </div>
+
+  <div class="step">
+    <span class="step-num">3</span><span class="step-title">Update OpenClaw config to use OAuth mode</span>
+    <pre><code>plugins:
+  entries:
+    msteams:
+      enabled: true
+      config:
+        mode: oauth
+        # tokens are stored and managed by OpenClaw auth store
+</code></pre>
+  </div>
+
+  <div class="warn">
+    OAuth tokens expire. OpenClaw handles refresh automatically if the refresh token is valid. If the agent stops responding, re-run the auth flow.
+  </div>
+
+  <!-- TIPS -->
+  <h2 id="tips">💡 Tips &amp; Gotchas</h2>
+  <ul>
+    <li><strong>Webhook vs Polling:</strong> Always use webhooks (this setup) over polling. Polling adds 10-60s of lag and burns API quota.</li>
+    <li><strong>Tunnel must be running</strong> before Teams tries to deliver messages. Set cloudflared to start on boot.</li>
+    <li><strong>Port 3978</strong> is the Bot Framework default. OpenClaw may use a different port — check <code>openclaw status</code>.</li>
+    <li><strong>Multi-tenant vs Single-tenant:</strong> For internal-only bots, single-tenant is more secure. Multi-tenant is needed if the bot will be used across orgs.</li>
+    <li><strong>The bot can't proactively join chats</strong> — but once it's added, it can choose when to respond (or not). That's intentional — makes it a participant, not a surveillance tool.</li>
+    <li><strong>Graph API for proactive messaging:</strong> If you need the bot to initiate conversations (not just respond), you'll need <code>Chat.Create</code> permissions and Graph API calls. That's a more advanced setup.</li>
+    <li><strong>Logs:</strong> <code>openclaw gateway status</code> and the OpenClaw log files are your friend for debugging dropped webhooks.</li>
+  </ul>
+
+  <div class="callout">
+    📚 Full docs: <a href="https://docs.openclaw.ai" target="_blank">docs.openclaw.ai</a> &nbsp;|&nbsp;
+    💬 Community: <a href="https://discord.com/invite/clawd" target="_blank">discord.com/invite/clawd</a>
+  </div>
+
+  <footer>
+    Generated by Revin · OpenClaw · March 2026
+  </footer>
+
+</div>
+</body>
+</html>
+</div>
+<script>
+  const HASH = '5ce8f424042afd24345aa12ab2ca2f3ee409164f72d5c425d801a1779e4e6a84';
+  const SK = '5ce8f424';
+  async function checkAuth() {
+    const v = document.getElementById('pw-input').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const h = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (h === HASH) {
+      document.getElementById('auth-overlay').remove();
+      document.getElementById('protected-content').style.display = 'block';
+      sessionStorage.setItem('auth_'+SK, '1');
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+  if (sessionStorage.getItem('auth_'+SK)==='1') {
+    document.getElementById('auth-overlay').remove();
+    document.getElementById('protected-content').style.display = 'block';
+  }
+</script>
+</body>
+</html>
