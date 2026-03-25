@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MSP PSA × A3 — Engineering Gap Analysis</title>
+  <style>
+    #auth-overlay {
+      position: fixed; inset: 0; background: #0d1117;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #auth-box {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 12px; padding: 40px; width: 360px; text-align: center;
+    }
+    #auth-box h2 { color: #e6edf3; margin: 0 0 8px; font-size: 20px; }
+    #auth-box p { color: #8b949e; font-size: 14px; margin: 0 0 24px; }
+    #auth-box input {
+      width: 100%; box-sizing: border-box; padding: 10px 14px;
+      border-radius: 6px; border: 1px solid #30363d; background: #0d1117;
+      color: #e6edf3; font-size: 15px; margin-bottom: 12px; outline: none;
+    }
+    #auth-box input:focus { border-color: #00c7b1; }
+    #auth-box button {
+      width: 100%; padding: 10px; background: #00c7b1; color: #0d1117;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    #auth-box button:hover { opacity: 0.85; }
+    #auth-error { color: #f85149; font-size: 13px; margin-top: 8px; display: none; }
+    #protected-content { display: none; }
+  </style>
+</head>
+<body>
+<div id="auth-overlay">
+  <div id="auth-box">
+    <h2>🔒 Protected</h2>
+    <p>Enter the password to continue.</p>
+    <input type="password" id="pw-input" placeholder="Password" autofocus
+      onkeydown="if(event.key==='Enter') checkAuth()">
+    <button onclick="checkAuth()">Unlock →</button>
+    <div id="auth-error">Incorrect password.</div>
+  </div>
+</div>
+<div id="protected-content"><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSP PSA × A3 — Engineering Gap Analysis</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f172a; font-family: 'Segoe UI', system-ui, sans-serif; color: #e2e8f0; min-height: 100vh; padding: 40px 48px; }
+
+  .page-header { position: relative; margin-bottom: 48px; border-bottom: 1px solid #1e3a5f; padding-bottom: 24px; }
+  .rev-badge { position: absolute; top: 0; right: 0; font-size: 13px; font-weight: 700; color: #1667CC; letter-spacing: 0.5px; }
+  h1 { font-size: 30px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+  h1 span { color: #1667CC; }
+  .subtitle { font-size: 14px; color: #64748b; }
+  .meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #475569; border: 1px solid #1e3a5f; padding: 3px 10px; border-radius: 4px; }
+  .badge.eng { color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+
+  .section-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #64748b; margin-bottom: 16px; margin-top: 48px; display: flex; align-items: center; gap: 12px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: #1e293b; }
+
+  /* SUMMARY SCORECARD */
+  .scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 8px; }
+  .score-card { background: #1e293b; border-radius: 10px; padding: 20px; text-align: center; }
+  .score-card.covered { border-top: 3px solid #3DC570; }
+  .score-card.partial { border-top: 3px solid #f59e0b; }
+  .score-card.missing { border-top: 3px solid #ef4444; }
+  .score-card.risk { border-top: 3px solid #a78bfa; }
+  .score-num { font-size: 36px; font-weight: 800; margin-bottom: 4px; }
+  .score-card.covered .score-num { color: #3DC570; }
+  .score-card.partial .score-num { color: #f59e0b; }
+  .score-card.missing .score-num { color: #ef4444; }
+  .score-card.risk .score-num { color: #a78bfa; }
+  .score-label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ENGINEERING INSIGHT BARS */
+  .insight-bar { background: rgba(22,103,204,0.08); border: 1px solid rgba(22,103,204,0.2); border-radius: 8px; padding: 14px 18px; margin-bottom: 12px; font-size: 13px; color: #93c5fd; line-height: 1.5; }
+  .insight-bar strong { color: #fff; }
+  .insight-bar.warning { background: rgba(245,158,11,0.08); border-color: rgba(245,158,11,0.2); color: #fde68a; }
+  .insight-bar.danger { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); color: #fca5a5; }
+  .insight-bar.purple { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); color: #c4b5fd; }
+
+  /* REQUIREMENTS TABLE */
+  .req-table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+  .req-table th { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 10px 14px; text-align: left; background: #1e293b; color: #64748b; }
+  .req-table td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid #0f172a; color: #94a3b8; vertical-align: top; }
+  .req-table td:first-child { color: #e2e8f0; font-weight: 600; white-space: nowrap; }
+  .req-table tr:nth-child(even) td { background: #131f35; }
+  .req-table tr:nth-child(odd) td { background: #1e293b; }
+
+  .pill { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+  .pill.covered { background: rgba(61,197,112,0.15); color: #3DC570; }
+  .pill.partial { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .pill.missing { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .pill.onhold { background: rgba(100,116,139,0.15); color: #94a3b8; }
+
+  .effort-chip { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #0f172a; color: #475569; white-space: nowrap; }
+  .effort-chip.s { color: #3DC570; }
+  .effort-chip.m { color: #f59e0b; }
+  .effort-chip.l { color: #ef4444; }
+  .effort-chip.xl { color: #a78bfa; }
+
+  /* ENG BREAKDOWN CARDS */
+  .eng-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .eng-card { background: #1e293b; border-radius: 10px; padding: 20px; }
+  .eng-card h3 { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .eng-card .eng-meta { font-size: 10px; color: #475569; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; }
+  .eng-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .eng-card ul li { font-size: 12px; color: #64748b; padding: 6px 10px; background: #0f172a; border-radius: 6px; line-height: 1.4; }
+  .eng-card ul li strong { color: #94a3b8; }
+  .eng-card.covered { border-top: 3px solid #3DC570; }
+  .eng-card.partial { border-top: 3px solid #f59e0b; }
+  .eng-card.missing { border-top: 3px solid #ef4444; }
+
+  /* PRIORITY TABLE */
+  .priority-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .priority-card { background: #1e293b; border-radius: 10px; padding: 18px; }
+  .priority-card .p-label { font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .priority-card.p1 { border-top: 3px solid #ef4444; }
+  .priority-card.p1 .p-label { color: #ef4444; }
+  .priority-card.p2 { border-top: 3px solid #f59e0b; }
+  .priority-card.p2 .p-label { color: #f59e0b; }
+  .priority-card.p3 { border-top: 3px solid #3DC570; }
+  .priority-card.p3 .p-label { color: #3DC570; }
+  .priority-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .priority-card ul li { font-size: 12px; color: #64748b; padding: 8px 12px; background: #0f172a; border-radius: 6px; line-height: 1.4; }
+  .priority-card ul li strong { color: #e2e8f0; display: block; margin-bottom: 2px; }
+  .priority-card ul li span { font-size: 10px; }
+
+  /* RISK SECTION */
+  .risk-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .risk-card { background: #1e293b; border-radius: 8px; padding: 16px; }
+  .risk-card .r-label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; color: #a78bfa; }
+  .risk-card p { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .risk-card p strong { color: #e2e8f0; }
+
+  .note { font-size: 11px; color: #475569; margin-top: 40px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <span class="rev-badge">rev.io · engineering</span>
+  <h1>MSP PSA Requirements <span>× Apollo 3</span></h1>
+  <p class="subtitle">Engineering gap analysis — what A3 covers, what it doesn't, and what it costs to close the delta</p>
+  <div class="meta">
+    <span class="badge">Confidential · Internal</span>
+    <span class="badge eng">⚙ Engineering Perspective</span>
+    <span class="badge">March 2026</span>
+  </div>
+</div>
+
+<!-- SCORECARD -->
+<div class="section-title">Coverage Scorecard — MSP Requirements vs A3</div>
+<div class="scorecard">
+  <div class="score-card covered">
+    <div class="score-num">6</div>
+    <div class="score-label">Covered in A3</div>
+  </div>
+  <div class="score-card partial">
+    <div class="score-num">4</div>
+    <div class="score-label">Partial / Risky</div>
+  </div>
+  <div class="score-card missing">
+    <div class="score-num">13</div>
+    <div class="score-label">Not in A3</div>
+  </div>
+  <div class="score-card risk">
+    <div class="score-num">1</div>
+    <div class="score-label">On Hold</div>
+  </div>
+</div>
+
+<div class="insight-bar warning" style="margin-top:16px;">
+  <strong>Engineering read:</strong> A3 covers roughly 26% of the MSP requirements surface. Most agreement-layer and profitability work — the backbone of competitive MSP positioning — has zero A3 representation. The effort to close this gap is significant; it's not a sprint, it's a platform investment.
+</div>
+
+<!-- FULL REQUIREMENTS TABLE -->
+<div class="section-title">Full Requirements Map</div>
+<table class="req-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Requirement</th>
+      <th>A3 Coverage</th>
+      <th>A3 Item(s)</th>
+      <th>Effort Est.</th>
+      <th>Engineering Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- GAPS -->
+    <tr>
+      <td>Gap 1</td>
+      <td>Third-Party Integrations</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>IT Glue (2 items), Hudu (2 items), NinjaOne</td>
+      <td><span class="effort-chip l">L</span></td>
+      <td>Docs integrations solid. RMM is NinjaOne-only — no multi-vendor adapter framework. Distributors (ScanSource, TD SYNNEX, Ingram, Pax8) and CRM (Zoho, HubSpot, SF, Dynamics) are entirely absent from A3.</td>
+    </tr>
+    <tr>
+      <td>Gap 2</td>
+      <td>Agreements & Contracts</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>Prepaid Support Hour Billing (partial)</td>
+      <td><span class="effort-chip xl">XL</span></td>
+      <td>The most complex gap. Requires architectural changes to how recurring services relate to agreements. Pricing library, cancellation workflows, billing cycle flexibility, and term tracking are all absent. This is a platform refactor, not a feature sprint.</td>
+    </tr>
+    <tr>
+      <td>Gap 3</td>
+      <td>Configurations</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>Asset Relationships (Configurations) — 1 week, Not Started</td>
+      <td><span class="effort-chip xl">XL</span></td>
+      <td>The 1-week estimate is almost certainly wrong for full ConnectWise-style config management. The requirements doc itself says "Apollo 3+" — implying this is aspirational for A3, not committed. Hierarchies + dependencies + agreement linking is a data model change.</td>
+    </tr>
+    <tr>
+      <td>Gap 4</td>
+      <td>Quoting Non-Catalog Products</td>
+      <td><span class="pill onhold">On Hold</span></td>
+      <td>Quote Management — On Hold</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Quote Management is in A3 but On Hold. The specific need (ad-hoc line items → auto-catalog on approval) requires quote→catalog write-back logic. Not technically enormous, but currently deprioritized. Needs a champion to unblock.</td>
+    </tr>
+    <tr>
+      <td>Gap 5</td>
+      <td>Asset Reconciliation</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>NinjaOne integration, Managed Assets section</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Managed Assets section gets you inventory visibility, but the reconciliation report (R-7: side-by-side RMM vs. billed counts with revenue impact) is not in A3. That reporting layer needs to be scoped separately.</td>
+    </tr>
+    <tr>
+      <td>Gap 6</td>
+      <td>Inline Profitability</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip l">L</span></td>
+      <td>Zero A3 coverage. Requires agreement-level cost model: MRR vs. labor (from timesheets), margin trends, utilization by tier. Depends on the agreement architecture (Gap 2) being solved first — blocked.</td>
+    </tr>
+    <!-- AGREEMENTS REQUIREMENTS -->
+    <tr>
+      <td>R1</td>
+      <td>Pricing & Billing Rule Library</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip xl">XL</span></td>
+      <td>Global admin pricing table with propagation + audit log. The "600 records" problem is a data architecture issue — solving it requires a normalized pricing layer that doesn't exist today. This is foundational work for most other agreement requirements.</td>
+    </tr>
+    <tr>
+      <td>R2</td>
+      <td>Recurring Services as Agreement Children</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip xl">XL</span></td>
+      <td>Structural database relationship change. Recurring services must have a non-nullable FK to agreements. Migration path for existing orphaned records is complex. This is the kind of change that requires a data migration plan and backward-compat strategy for existing telecom customers (see R10).</td>
+    </tr>
+    <tr>
+      <td>R3</td>
+      <td>Block / Prepaid Hour Auto-Tracking</td>
+      <td><span class="pill covered">Covered</span></td>
+      <td>Prepaid Support Hour Billing, Agreements - Prepaid Support Hour Billing</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Two items in A3 (possible duplicate — worth confirming scope). Core mechanism: real-time hour balance tracking + auto-billing overage at agreement-defined rate. Timesheet integration is a dependency. Solid if scoped correctly.</td>
+    </tr>
+    <tr>
+      <td>R4</td>
+      <td>Multiple Billing Cycles</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>Agreements - Additional Types of Billing (Related to tickets)</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>The A3 item's name implies ticket-based billing types, not cycle flexibility (monthly/quarterly/annual). These may overlap but are not the same requirement. Engineering needs to confirm whether billing cycle per-agreement is in scope for this item or is separate work.</td>
+    </tr>
+    <tr>
+      <td>R5</td>
+      <td>Evergreen / No-End-Date Agreements</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip s">S</span></td>
+      <td>Relatively small change — nullable end date + UI logic to treat null as "evergreen." Low effort, high MSP impact. Good candidate for A3 scope addition with minimal risk.</td>
+    </tr>
+    <tr>
+      <td>R6</td>
+      <td>Term vs. Expiration Tracking</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip s">S</span></td>
+      <td>Two date fields instead of one, plus renewal logic that reads both. Small schema change + UI. Also a good low-effort A3 addition.</td>
+    </tr>
+    <tr>
+      <td>R7</td>
+      <td>Clean Cancellation Workflows</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Depends on R2 (agreement-child relationship). Without it, cancellation workflows can't cascade cleanly. Blocked until the structural relationship is in place. Medium effort post-R2, high effort if attempting before it.</td>
+    </tr>
+    <tr>
+      <td>R8</td>
+      <td>Inline Agreement Profitability</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip l">L</span></td>
+      <td>MRR vs. labor cost at agreement level. Requires timesheet data feeding into agreement context, cost-per-hour models, and a margin trend UI. Blocked on R2 and the labor/timesheet data pipeline. This is the feature the doc flags as a market differentiator — worth the investment, but it's downstream of foundational work.</td>
+    </tr>
+    <tr>
+      <td>R9</td>
+      <td>Agreement-Owned Pricing Overrides</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Depends on R1 (pricing library). Override logic at agreement level that survives global rate changes requires a layered pricing model (global → agreement → line item). Medium effort once R1 is in place, large effort without it.</td>
+    </tr>
+    <tr>
+      <td>R10</td>
+      <td>Scale + Telecom Preservation</td>
+      <td><span class="pill covered">Covered</span></td>
+      <td>Implicit in A3 scope philosophy</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>No explicit A3 item, but the requirement is a constraint on all MSP work: additive only, no regression on telecom billing paths. Engineering must treat this as a non-negotiable test gate on every agreement-related change. Needs formal regression coverage in CI.</td>
+    </tr>
+    <!-- RMM REQUIREMENTS -->
+    <tr>
+      <td>RMM R-1</td>
+      <td>RMM Connection Framework</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>NinjaOne integration</td>
+      <td><span class="effort-chip xl">XL</span></td>
+      <td>NinjaOne is one vendor. The requirement calls for a multi-vendor OAuth/API adapter (NinjaOne, Datto, N-able, Kaseya, Atera, Syncro). Building the framework correctly means abstracting vendor-specific APIs behind a canonical model. Doing NinjaOne first is the right approach — but the adapter architecture needs to be designed for extensibility from day one or every new vendor is a rewrite.</td>
+    </tr>
+    <tr>
+      <td>RMM R-2</td>
+      <td>Asset Type → Product Mapping</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Global admin mapping table: canonical asset type → Rev.io product. Vendor alias resolution layer on top. Medium effort, but must be built before per-agreement billing config (R-3) is possible. A prerequisite, not a follow-on.</td>
+    </tr>
+    <tr>
+      <td>RMM R-3</td>
+      <td>Agreement Asset Billing Configuration</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Per-agreement config for which asset types to bill. Auto-creation of recurring service component if absent. Depends on R-2 (mapping table) and the agreement child architecture (R2). Medium effort in isolation, blocked by upstream work.</td>
+    </tr>
+    <tr>
+      <td>RMM R-4</td>
+      <td>Managed Assets Section</td>
+      <td><span class="pill covered">Covered</span></td>
+      <td>Assets - Managed Assets (Integrations)</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>In A3. Customer-level device inventory panel across connected RMMs. Standard CRUD + status lifecycle UI. Solid scope item — just needs implementation quality focus on the RMM data sync layer.</td>
+    </tr>
+    <tr>
+      <td>RMM R-5</td>
+      <td>Continuous Automated Sync</td>
+      <td><span class="pill partial">Partial</span></td>
+      <td>Developer Portal - Webhooks</td>
+      <td><span class="effort-chip l">L</span></td>
+      <td>Webhook infra is in A3 but as a developer portal feature, not RMM-specific. The requirement has teeth: immutable audit log, last-known-quantity on API failure (never go to zero), near-real-time sync. These are reliability engineering concerns that go beyond just "add webhook support."</td>
+    </tr>
+    <tr>
+      <td>RMM R-6</td>
+      <td>Ticket Rollup to Agreement</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Tickets on managed assets auto-associate to governing agreement + Cost Per Managed Asset metric feeds profitability panel. Depends on managed asset → agreement linking (R-3) and the profitability model (R8/Gap 6). Medium effort, downstream dependency.</td>
+    </tr>
+    <tr>
+      <td>RMM R-7</td>
+      <td>Native Reconciliation Report</td>
+      <td><span class="pill missing">Missing</span></td>
+      <td>—</td>
+      <td><span class="effort-chip m">M</span></td>
+      <td>Side-by-side RMM vs. billed counts, schedulable, drillable, exportable, with Revenue Assurance Summary (dollar impact of discrepancies). Medium effort — it's a reporting feature, but requires clean underlying data from R-4 and R-5. High business value. Kills the Excel VLOOKUP workflow permanently.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- EFFORT LEGEND -->
+<div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;">
+  <span style="font-size:11px;color:#475569;">Effort scale:</span>
+  <span class="effort-chip s">S = days</span>
+  <span class="effort-chip m">M = 1–3 weeks</span>
+  <span class="effort-chip l">L = 1–2 months</span>
+  <span class="effort-chip xl">XL = quarter+</span>
+</div>
+
+<!-- DEPENDENCY CHAIN -->
+<div class="section-title">Engineering Dependency Chain</div>
+<div class="insight-bar purple">
+  <strong>The ordering problem:</strong> Most agreement-layer requirements have hard dependencies on two foundational items — the Pricing Library (R1) and the Agreement-Child Architecture (R2). These aren't features; they're platform investments. Without them, R3, R7, R8, R9, and the full RMM billing config stack are either blocked or brittle.
+</div>
+
+<div style="background:#1e293b;border-radius:10px;padding:24px;margin-top:12px;">
+  <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#64748b;margin-bottom:16px;">Critical Path — What Unlocks What</div>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#ef4444;font-weight:700;border:1px solid rgba(239,68,68,0.3);">R1 — Pricing Library</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">R9 Overrides</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">R8 Profitability view</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#ef4444;font-weight:700;border:1px solid rgba(239,68,68,0.3);">R2 — Agreement-Child Arch</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">R7 Cancellation</div>
+      <div style="color:#475569;font-size:18px;">+</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">RMM R-3 Billing Config</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">RMM R-6 Ticket Rollup</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#ef4444;font-weight:700;border:1px solid rgba(239,68,68,0.3);">RMM R-1 — Adapter Framework</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">RMM R-2 Asset Mapping</div>
+      <div style="color:#475569;font-size:18px;">→</div>
+      <div style="background:#0f172a;border-radius:6px;padding:8px 14px;font-size:12px;color:#f59e0b;">RMM R-4/R-5/R-7 (sync, assets, report)</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;font-size:12px;color:#475569;line-height:1.6;">
+    <strong style="color:#94a3b8;">The red items are blocking.</strong> If R1, R2, and RMM R-1 don't ship in A3, the downstream items either can't ship or ship in a form that will require painful rework. These three should be treated as A3 epics, not individual stories.
+  </div>
+</div>
+
+<!-- ENGINEERING PRIORITIES -->
+<div class="section-title">Engineering Recommendation — What to Push Into A3</div>
+<div class="priority-grid">
+  <div class="priority-card p1">
+    <div class="p-label">🔴 Push into A3 Now</div>
+    <ul>
+      <li>
+        <strong>R1 — Pricing Library</strong>
+        <span>XL effort but a blocker for R9, R8. Can't close the agreements gap without it. Start the epic.</span>
+      </li>
+      <li>
+        <strong>R2 — Agreement-Child Architecture</strong>
+        <span>Platform structural work. Migrate existing data under a compatibility shim. Define the data model in A3 even if full migration lands in A4.</span>
+      </li>
+      <li>
+        <strong>R5 — Evergreen Agreements</strong>
+        <span>Small effort, high MSP signal. Quick win. Add it.</span>
+      </li>
+      <li>
+        <strong>R6 — Term vs. Expiration Fields</strong>
+        <span>Same — schema + UI change. Minimal risk. Delivers renewal intelligence foundation.</span>
+      </li>
+      <li>
+        <strong>RMM R-2 — Asset Type→Product Mapping</strong>
+        <span>Must be built before per-agreement RMM billing config. Should accompany NinjaOne integration work.</span>
+      </li>
+    </ul>
+  </div>
+  <div class="priority-card p2">
+    <div class="p-label">🟡 Scope for A3 if Capacity Exists</div>
+    <ul>
+      <li>
+        <strong>Gap 4 — Unblock Quote Management</strong>
+        <span>Currently On Hold. Unblocking it + scoping ad-hoc line items + auto-catalog write-back is M effort. Breaks the Word/Excel escape hatch.</span>
+      </li>
+      <li>
+        <strong>RMM R-7 — Reconciliation Report</strong>
+        <span>High business value, M effort once Managed Assets is in. Kills the VLOOKUP workflow.</span>
+      </li>
+      <li>
+        <strong>RMM R-3 — Agreement Asset Billing Config</strong>
+        <span>Depends on R-2 mapping table. If R-2 ships in A3, R-3 can follow close behind.</span>
+      </li>
+      <li>
+        <strong>R7 — Cancellation Workflows</strong>
+        <span>M effort post-R2. High MSP satisfaction impact. Clean cancellation is a trust signal.</span>
+      </li>
+    </ul>
+  </div>
+  <div class="priority-card p3">
+    <div class="p-label">🟢 A4 — After Foundations Land</div>
+    <ul>
+      <li>
+        <strong>R8 — Inline Agreement Profitability</strong>
+        <span>Blocked on R1 + R2 + timesheet pipeline. A4 is the right target once the platform is ready. This is the differentiator feature — worth doing right.</span>
+      </li>
+      <li>
+        <strong>Gap 3 — Full Configurations</strong>
+        <span>The 1-week A3 estimate should be a spike only. Full ConnectWise-style config management (hierarchies, dependencies) is A4 scope.</span>
+      </li>
+      <li>
+        <strong>CRM + Distributor Integrations</strong>
+        <span>None in A3. Once the RMM adapter framework is proven, the pattern extends. CRM and distributor integrations follow the same playbook. A4 backlog candidates.</span>
+      </li>
+      <li>
+        <strong>RMM R-6 — Ticket Rollup</strong>
+        <span>Downstream of agreement-child arch and profitability model. A4 target.</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- RISK FLAGS -->
+<div class="section-title">Engineering Risk Flags</div>
+<div class="risk-grid">
+  <div class="risk-card">
+    <div class="r-label">⚠ Scope Underestimate</div>
+    <p><strong>Configurations (Gap 3)</strong> has a 1-week estimate in A3. Full ConnectWise-style config management — hierarchies, dependencies, agreement linking — is a data model change and months of work. The A3 item should be scoped as a discovery spike, not delivery.</p>
+  </div>
+  <div class="risk-card">
+    <div class="r-label">⚠ Duplicate Items</div>
+    <p><strong>Prepaid Support Hour Billing</strong> appears twice in A3 (with and without "Agreements -" prefix). Risk of parallel implementation tracks or split ownership. Needs consolidation and single DRI before work begins.</p>
+  </div>
+  <div class="risk-card">
+    <div class="r-label">⚠ Telecom Regression</div>
+    <p><strong>R10 (Scale + Telecom Preservation)</strong> is a constraint, not a feature. Every agreement architecture change (R1, R2) must be tested against existing telecom billing paths. This needs formal regression coverage in CI — not a post-merge afterthought.</p>
+  </div>
+  <div class="risk-card">
+    <div class="r-label">⚠ RMM Framework Extensibility</div>
+    <p><strong>NinjaOne-first is fine; NinjaOne-only is a trap.</strong> If the integration is built as a point solution rather than with a vendor-agnostic adapter layer, every new RMM (Datto, N-able, Kaseya) is a partial rewrite. Architecture review required before NinjaOne dev begins.</p>
+  </div>
+  <div class="risk-card">
+    <div class="r-label">⚠ Blocked by Foundations</div>
+    <p><strong>13 requirements</strong> are missing from A3. Of those, 8 are downstream of R1 (pricing library) or R2 (agreement-child arch). If those two foundational items slip, the entire MSP agreement surface slides to A4+. They need early epic kickoff, not late-cycle scope add.</p>
+  </div>
+  <div class="risk-card">
+    <div class="r-label">⚠ Quote Management On Hold</div>
+    <p><strong>Quote Management is On Hold</strong> in A3. The quoting gap (non-catalog products, auto-catalog write-back) breaks the quote→job→invoice workflow for MSP reps. On Hold status without a stated reason or owner creates invisible risk — someone needs to revisit the hold decision.</p>
+  </div>
+</div>
+
+<!-- BOTTOM LINE -->
+<div class="section-title">Bottom Line</div>
+<div class="insight-bar danger">
+  <strong>The honest engineering take:</strong> A3 is making real progress on integrations (IT Glue, Hudu, NinjaOne) and prepaid hours. But the agreement management overhaul — the thing that makes or breaks MSP deals — is almost entirely unscoped. The Pricing Library and Agreement-Child Architecture aren't features you can add later; they're the foundation everything else sits on. If we want A3 to be a credible MSP release, those two epics need to start now. If they're truly A4 work, the roadmap narrative needs to reflect that honestly — because the requirements deck doesn't.
+</div>
+<div class="insight-bar" style="margin-top:8px;">
+  <strong>Quick wins available:</strong> R5 (Evergreen Agreements) and R6 (Term/Expiration fields) are small-effort, high-signal additions that can ship in A3 with minimal risk. RMM R-7 (Reconciliation Report) is M effort once Managed Assets lands. These three items alone would meaningfully strengthen the MSP story for A3 without requiring foundational architecture work.
+</div>
+
+<p class="note">Rev.io · Engineering · MSP Gap Analysis · Internal · Confidential · March 2026</p>
+
+</body>
+</html>
+</div>
+<script>
+  const HASH = '8e2fec13a15477687a9dd353cab69cc46b631e33dce40a65c10ac80e4632fe7e';
+  const SK = '8e2fec13';
+  async function checkAuth() {
+    const v = document.getElementById('pw-input').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const h = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (h === HASH) {
+      document.getElementById('auth-overlay').remove();
+      document.getElementById('protected-content').style.display = 'block';
+      sessionStorage.setItem('auth_'+SK, '1');
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+  if (sessionStorage.getItem('auth_'+SK)==='1') {
+    document.getElementById('auth-overlay').remove();
+    document.getElementById('protected-content').style.display = 'block';
+  }
+</script>
+</body>
+</html>
