@@ -335,7 +335,7 @@
     </div>
     <div class="section-body">
       <div class="info-box">
-        These are <strong>Application-type</strong> permissions granted via admin consent in Azure Portal → App registrations → Grant admin consent for Rev.io. They enable the bot to call Microsoft Graph API autonomously (no delegated user sign-in required).
+        These are <strong>Application-type</strong> permissions granted via admin consent in Azure Portal → App registrations → Grant admin consent for Rev.io. They enable the bot to call Microsoft Graph API autonomously (no delegated user sign-in required). Last verified via Graph API: <strong>March 27, 2026</strong>.
       </div>
       <table class="perm-table">
         <thead>
@@ -347,14 +347,14 @@
         </thead>
         <tbody>
           <tr>
-            <td class="perm-name">AppCatalog.ReadWrite.All</td>
-            <td><span class="badge badge-orange">Application</span></td>
-            <td class="perm-desc">Manage the Teams app catalog — publish, update, and remove apps</td>
-          </tr>
-          <tr>
             <td class="perm-name">User.Read.All</td>
             <td><span class="badge badge-orange">Application</span></td>
             <td class="perm-desc">Look up any user in the tenant by ID, UPN, or display name</td>
+          </tr>
+          <tr>
+            <td class="perm-name">User.ReadWrite.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Read and write user profiles across the tenant</td>
           </tr>
           <tr>
             <td class="perm-name">TeamsAppInstallation.ReadWriteForUser.All</td>
@@ -371,15 +371,10 @@
             <td><span class="badge badge-orange">Application</span></td>
             <td class="perm-desc">Install, upgrade, and remove apps in any group chat</td>
           </tr>
-          <tr>
-            <td class="perm-name">Chat.Create</td>
-            <td><span class="badge badge-orange">Application</span></td>
-            <td class="perm-desc">Create new group chats programmatically via Graph API</td>
-          </tr>
         </tbody>
       </table>
       <div class="warning-box">
-        <strong>⚠️ Permissions Policy:</strong> Least-privilege only. New permissions must be explicitly requested and justified — never added speculatively. Each addition above was granted for a specific use case.
+        <strong>⚠️ Permissions Policy:</strong> Least-privilege only. New permissions must be explicitly requested and justified — never added speculatively. <code>AppCatalog.ReadWrite.All</code> and <code>Chat.Create</code> were removed 2026-03-27 as too broad.
       </div>
     </div>
   </div>
