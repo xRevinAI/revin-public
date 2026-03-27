@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revin — Teams Bot Setup</title>
+  <style>
+    #auth-overlay {
+      position: fixed; inset: 0; background: #0d1117;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #auth-box {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 12px; padding: 40px; width: 360px; text-align: center;
+    }
+    #auth-box h2 { color: #e6edf3; margin: 0 0 8px; font-size: 20px; }
+    #auth-box p { color: #8b949e; font-size: 14px; margin: 0 0 24px; }
+    #auth-box input {
+      width: 100%; box-sizing: border-box; padding: 10px 14px;
+      border-radius: 6px; border: 1px solid #30363d; background: #0d1117;
+      color: #e6edf3; font-size: 15px; margin-bottom: 12px; outline: none;
+    }
+    #auth-box input:focus { border-color: #00c7b1; }
+    #auth-box button {
+      width: 100%; padding: 10px; background: #00c7b1; color: #0d1117;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    #auth-box button:hover { opacity: 0.85; }
+    #auth-error { color: #f85149; font-size: 13px; margin-top: 8px; display: none; }
+    #protected-content { display: none; }
+  </style>
+</head>
+<body>
+<div id="auth-overlay">
+  <div id="auth-box">
+    <h2>🔒 Protected</h2>
+    <p>Enter the password to continue.</p>
+    <input type="password" id="pw-input" placeholder="Password" autofocus
+      onkeydown="if(event.key==='Enter') checkAuth()">
+    <button onclick="checkAuth()">Unlock →</button>
+    <div id="auth-error">Incorrect password.</div>
+  </div>
+</div>
+<div id="protected-content"><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revin — Teams Bot Setup</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #2d3748;
+    }
+    .avatar {
+      width: 56px; height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1EB4AA, #0078d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+    .subtitle { font-size: 0.9rem; color: #718096; margin-top: 0.2rem; }
+
+    .section {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 0.9rem 1.2rem;
+      background: #1e2438;
+      border-bottom: 1px solid #2d3748;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .section-header h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #a0aec0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .section-icon { font-size: 1rem; }
+    .section-body { padding: 1.2rem; }
+
+    .kv-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0.5rem 1rem;
+    }
+    .kv-label {
+      font-size: 0.82rem;
+      color: #718096;
+      font-weight: 500;
+      padding-top: 0.15rem;
+    }
+    .kv-value {
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      word-break: break-all;
+    }
+    .kv-value code {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.82rem;
+      color: #63b3ed;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .badge-green  { background: #1a3a2a; color: #68d391; border: 1px solid #276749; }
+    .badge-blue   { background: #1a2a3a; color: #63b3ed; border: 1px solid #2b6cb0; }
+    .badge-orange { background: #3a2a1a; color: #f6ad55; border: 1px solid #c05621; }
+    .badge-red    { background: #3a1a1a; color: #fc8181; border: 1px solid #c53030; }
+    .badge-purple { background: #2a1a3a; color: #b794f4; border: 1px solid #6b46c1; }
+    .badge-teal   { background: #1a3a38; color: #4fd1c5; border: 1px solid #276764; }
+
+    .perm-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .perm-table th {
+      text-align: left;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.78rem;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid #2d3748;
+      font-weight: 600;
+    }
+    .perm-table td {
+      padding: 0.55rem 0.8rem;
+      border-bottom: 1px solid #1e2438;
+      vertical-align: top;
+    }
+    .perm-table tr:last-child td { border-bottom: none; }
+    .perm-table tr:hover td { background: #1e2438; }
+    .perm-name { color: #63b3ed; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.82rem; }
+    .perm-desc { color: #a0aec0; font-size: 0.82rem; }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+    @media (max-width: 600px) { .arch-grid { grid-template-columns: 1fr; } }
+    .arch-card {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+    }
+    .arch-card h3 { font-size: 0.85rem; color: #a0aec0; margin-bottom: 0.4rem; font-weight: 600; }
+    .arch-card p  { font-size: 0.83rem; color: #718096; }
+    .arch-card .val { font-size: 0.9rem; color: #e2e8f0; font-weight: 500; margin-bottom: 0.2rem; }
+
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.83rem;
+    }
+    .flow-step {
+      background: #0f1117;
+      border: 1px solid #2d3748;
+      border-radius: 6px;
+      padding: 0.3rem 0.7rem;
+      color: #a0aec0;
+      white-space: nowrap;
+    }
+    .flow-arrow { color: #4a5568; font-size: 1rem; }
+
+    .warning-box {
+      background: #2d1c1c;
+      border: 1px solid #c53030;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-size: 0.83rem;
+      color: #fc8181;
+      margin-top: 1rem;
+    }
+    .warning-box strong { color: #feb2b2; }
+
+    .info-box {
+      background: #1a2a3a;
+      border: 1px solid #2b6cb0;
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+      font-size: 0.83rem;
+      color: #90cdf4;
+      margin-bottom: 1rem;
+    }
+
+    .stack-row { margin-bottom: 0.6rem; display: flex; align-items: flex-start; gap: 0.6rem; }
+    .stack-dot { width: 6px; height: 6px; background: #1EB4AA; border-radius: 50%; margin-top: 0.42rem; flex-shrink: 0; }
+    .stack-text { font-size: 0.85rem; color: #a0aec0; }
+    .stack-text strong { color: #e2e8f0; }
+
+    footer { text-align: center; color: #4a5568; font-size: 0.78rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #2d3748; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="avatar">🤖</div>
+    <div>
+      <h1>Revin — MS Teams Bot Setup</h1>
+      <div class="subtitle">Bot Framework · Azure App Registration · Graph API Permissions · OpenClaw Config</div>
+    </div>
+  </header>
+
+  <!-- Identity -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🪪</span>
+      <h2>Bot Identity / Azure App Registration</h2>
+    </div>
+    <div class="section-body">
+      <div class="kv-grid">
+        <div class="kv-label">Display Name</div>
+        <div class="kv-value">Revin AI Assistant</div>
+
+        <div class="kv-label">Bot ID (App ID)</div>
+        <div class="kv-value"><code>d5424673-5dbd-4c2b-abfd-a38e16954789</code></div>
+
+        <div class="kv-label">Tenant ID</div>
+        <div class="kv-value"><code>ad233ca3-255e-4697-90c0-5bf96200d3ae</code></div>
+
+        <div class="kv-label">Developer</div>
+        <div class="kv-value">Rev.io</div>
+
+        <div class="kv-label">Website</div>
+        <div class="kv-value"><code>https://revbots.net</code></div>
+
+        <div class="kv-label">Bot Type</div>
+        <div class="kv-value"><span class="badge badge-blue">Multi-Tenant Bot</span></div>
+
+        <div class="kv-label">Auth Mechanism</div>
+        <div class="kv-value">Client Secret (App Password) <span class="badge badge-orange">DDn8Q~Oyi39ky…</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teams App Manifest -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <h2>Teams App Manifest</h2>
+    </div>
+    <div class="section-body">
+      <div class="kv-grid">
+        <div class="kv-label">Manifest Version</div>
+        <div class="kv-value"><code>1.23</code></div>
+
+        <div class="kv-label">App Version</div>
+        <div class="kv-value"><code>1.0.4</code></div>
+
+        <div class="kv-label">App Name (short)</div>
+        <div class="kv-value">Revin</div>
+
+        <div class="kv-label">Accent Color</div>
+        <div class="kv-value"><code>#1EB4AA</code> <span style="display:inline-block;width:14px;height:14px;background:#1EB4AA;border-radius:3px;vertical-align:middle;margin-left:4px;"></span></div>
+
+        <div class="kv-label">Scopes</div>
+        <div class="kv-value">
+          <span class="badge badge-green">personal</span>&nbsp;
+          <span class="badge badge-blue">team</span>&nbsp;
+          <span class="badge badge-purple">groupChat</span>
+        </div>
+
+        <div class="kv-label">Supports Files</div>
+        <div class="kv-value"><span class="badge badge-green">Yes</span></div>
+
+        <div class="kv-label">Calling / Video</div>
+        <div class="kv-value"><span class="badge badge-red">No</span></div>
+
+        <div class="kv-label">Notification Only</div>
+        <div class="kv-value"><span class="badge badge-red">No — Full Bot</span></div>
+
+        <div class="kv-label">WebApp Resource</div>
+        <div class="kv-value"><code>api://botid-d5424673-5dbd-4c2b-abfd-a38e16954789</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSC Permissions (Manifest) -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔑</span>
+      <h2>Resource-Specific Consent (RSC) Permissions — Manifest</h2>
+    </div>
+    <div class="section-body">
+      <div class="info-box">
+        These are declared in the Teams App manifest under <code>authorization.permissions.resourceSpecific</code>. They are granted per-team/chat when the app is installed — no admin consent flow required for RSC.
+      </div>
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>Permission Name</th>
+            <th>Type</th>
+            <th>Scope</th>
+            <th>What it does</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="perm-name">ChannelMessage.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read channel messages in the team</td>
+          </tr>
+          <tr>
+            <td class="perm-name">ChannelMessage.Send.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Send messages to team channels</td>
+          </tr>
+          <tr>
+            <td class="perm-name">Member.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read the list of members in the team</td>
+          </tr>
+          <tr>
+            <td class="perm-name">Owner.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read team owner information</td>
+          </tr>
+          <tr>
+            <td class="perm-name">ChannelSettings.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read channel settings and metadata</td>
+          </tr>
+          <tr>
+            <td class="perm-name">TeamMember.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read team membership details</td>
+          </tr>
+          <tr>
+            <td class="perm-name">TeamSettings.Read.Group</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Team</td>
+            <td class="perm-desc">Read team-level settings</td>
+          </tr>
+          <tr>
+            <td class="perm-name">ChatMessage.Read.Chat</td>
+            <td><span class="badge badge-blue">Application</span></td>
+            <td>Chat</td>
+            <td class="perm-desc">Read messages in group chats where bot is installed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- OpenClaw Channel Config -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚙️</span>
+      <h2>OpenClaw Channel Configuration</h2>
+    </div>
+    <div class="section-body">
+      <div class="kv-grid">
+        <div class="kv-label">Channel</div>
+        <div class="kv-value"><code>channels.msteams</code></div>
+
+        <div class="kv-label">DM Policy</div>
+        <div class="kv-value"><span class="badge badge-orange">open</span> — anyone in tenant can DM</div>
+
+        <div class="kv-label">Group Policy</div>
+        <div class="kv-value"><span class="badge badge-orange">open</span> — any group member can trigger</div>
+
+        <div class="kv-label">Allow From</div>
+        <div class="kv-value"><code>["*"]</code> — all users</div>
+
+        <div class="kv-label">Require Mention</div>
+        <div class="kv-value"><span class="badge badge-red">false</span> — responds to all messages in group</div>
+
+        <div class="kv-label">Reply Style</div>
+        <div class="kv-value"><span class="badge badge-teal">thread</span></div>
+
+        <div class="kv-label">Chunk Mode</div>
+        <div class="kv-value"><code>newline</code></div>
+
+        <div class="kv-label">Text Chunk Limit</div>
+        <div class="kv-value">4,000 chars</div>
+
+        <div class="kv-label">History Limit</div>
+        <div class="kv-value">50 messages</div>
+
+        <div class="kv-label">Block Streaming</div>
+        <div class="kv-value"><span class="badge badge-green">on</span> — min 200 / max 1,500 chars, breaks at text_end</div>
+      </div>
+      <div class="warning-box">
+        <strong>⚠️ Security Note:</strong> groupPolicy="open" + elevated tools enabled is flagged as CRITICAL by OpenClaw's security audit. Recommend switching to <code>groupPolicy="allowlist"</code> with an explicit allow list of trusted user IDs.
+      </div>
+    </div>
+  </div>
+
+  <!-- Plugin / Stack -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🧩</span>
+      <h2>Plugin & Runtime Stack</h2>
+    </div>
+    <div class="section-body">
+      <div class="arch-grid">
+        <div class="arch-card">
+          <h3>Framework</h3>
+          <div class="val">OpenClaw</div>
+          <p>v2026.3.24 — up to date</p>
+        </div>
+        <div class="arch-card">
+          <h3>Teams Plugin</h3>
+          <div class="val">@openclaw/msteams</div>
+          <p>v2026.3.22 (bundled with core)</p>
+        </div>
+        <div class="arch-card">
+          <h3>Bot SDK</h3>
+          <div class="val">@microsoft/agents-hosting</div>
+          <p>M365 Agents SDK (Teams-native)</p>
+        </div>
+        <div class="arch-card">
+          <h3>AI Model</h3>
+          <div class="val">Claude Sonnet 4.6</div>
+          <p>anthropic/claude-sonnet-4-6 · 200k ctx</p>
+        </div>
+        <div class="arch-card">
+          <h3>Gateway</h3>
+          <div class="val">Local · loopback</div>
+          <p>ws://127.0.0.1:18789 · token auth</p>
+        </div>
+        <div class="arch-card">
+          <h3>Tunnel</h3>
+          <div class="val">Cloudflare</div>
+          <p>teams.revbots.net → local gateway</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Flow -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔄</span>
+      <h2>Message Flow</h2>
+    </div>
+    <div class="section-body">
+      <div class="flow">
+        <div class="flow-step">Teams User</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">MS Teams Service</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Cloudflare Tunnel<br/><small>teams.revbots.net</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">OpenClaw Gateway<br/><small>:18789 loopback</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">msteams Plugin</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Agent (Revin)<br/><small>Claude Sonnet 4.6</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Block Streaming Reply</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Sessions -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💬</span>
+      <h2>Active Teams Sessions</h2>
+    </div>
+    <div class="section-body">
+      <div class="kv-grid">
+        <div class="kv-label">Group Chat Session</div>
+        <div class="kv-value"><code>agent:main:msteams:group:19:942c7bacddf245698c54ff8ef489ea25@thread.v2</code></div>
+
+        <div class="kv-label">DM Session (Matt)</div>
+        <div class="kv-value"><code>agent:main:msteams:direct:ef228265-0337-45ae-b980-8476db194663</code></div>
+
+        <div class="kv-label">Bot Email</div>
+        <div class="kv-value"><code>matt.hills.bot@rev.io</code> (M365 / Entra licensed)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK Features -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✨</span>
+      <h2>Teams SDK Feature Status</h2>
+    </div>
+    <div class="section-body">
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>Block Streaming</strong> — ✅ Enabled. Responses stream progressively in DMs. Group streaming pending Microsoft GA.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>AI Label</strong> — ⏳ Pending plugin release. Native Teams SDK supports it; OpenClaw needs to set the flag in outbound activities.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>Welcome Card</strong> — ⏳ Pending. Triggered on member join; not yet implemented in plugin.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>Feedback Buttons</strong> — ⏳ Pending. Thumbs up/down with reflective learning hooks.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>Image Understanding</strong> — ⚡ May be active. <code>image-ops</code> module imported in plugin; worth testing by sending an image.</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>File Support</strong> — ✅ Enabled in manifest (<code>supportsFiles: true</code>).</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-dot"></div>
+        <div class="stack-text"><strong>Thread Replies</strong> — ✅ Active. <code>replyStyle: "thread"</code> keeps conversations threaded.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Generated by Revin · rev.io · <span id="ts"></span>
+  </footer>
+</div>
+<script>document.getElementById('ts').textContent = new Date().toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});</script>
+</body>
+</html>
+</div>
+<script>
+  const HASH = '8e2fec13a15477687a9dd353cab69cc46b631e33dce40a65c10ac80e4632fe7e';
+  const SK = '8e2fec13';
+  async function checkAuth() {
+    const v = document.getElementById('pw-input').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const h = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (h === HASH) {
+      document.getElementById('auth-overlay').remove();
+      document.getElementById('protected-content').style.display = 'block';
+      sessionStorage.setItem('auth_'+SK, '1');
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+  if (sessionStorage.getItem('auth_'+SK)==='1') {
+    document.getElementById('auth-overlay').remove();
+    document.getElementById('protected-content').style.display = 'block';
+  }
+</script>
+</body>
+</html>
