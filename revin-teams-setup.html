@@ -44,7 +44,7 @@
     <div id="auth-error">Incorrect password.</div>
   </div>
 </div>
-<div id="protected-content"><!DOCTYPE html>
+<div id="protected-content">
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -59,7 +59,7 @@
       line-height: 1.6;
       padding: 2rem 1rem;
     }
-    .container { max-width: 860px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
     header {
       display: flex;
       align-items: center;
@@ -78,6 +78,7 @@
     }
     h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
     .subtitle { font-size: 0.9rem; color: #718096; margin-top: 0.2rem; }
+    .updated-tag { display: inline-block; margin-top: 0.4rem; font-size: 0.75rem; background: #1a3a2a; color: #68d391; border: 1px solid #276749; border-radius: 999px; padding: 0.1rem 0.6rem; }
 
     .section {
       background: #1a1f2e;
@@ -106,7 +107,7 @@
 
     .kv-grid {
       display: grid;
-      grid-template-columns: 200px 1fr;
+      grid-template-columns: 220px 1fr;
       gap: 0.5rem 1rem;
     }
     .kv-label {
@@ -142,6 +143,7 @@
     .badge-red    { background: #3a1a1a; color: #fc8181; border: 1px solid #c53030; }
     .badge-purple { background: #2a1a3a; color: #b794f4; border: 1px solid #6b46c1; }
     .badge-teal   { background: #1a3a38; color: #4fd1c5; border: 1px solid #276764; }
+    .badge-yellow { background: #3a3010; color: #f6e05e; border: 1px solid #b7791f; }
 
     .perm-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     .perm-table th {
@@ -223,6 +225,8 @@
     .stack-text { font-size: 0.85rem; color: #a0aec0; }
     .stack-text strong { color: #e2e8f0; }
 
+    .divider { height: 1px; background: #2d3748; margin: 1rem 0; }
+
     footer { text-align: center; color: #4a5568; font-size: 0.78rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #2d3748; }
   </style>
 </head>
@@ -233,6 +237,7 @@
     <div>
       <h1>Revin — MS Teams Bot Setup</h1>
       <div class="subtitle">Bot Framework · Azure App Registration · Graph API Permissions · OpenClaw Config</div>
+      <div class="updated-tag">Updated March 27, 2026</div>
     </div>
   </header>
 
@@ -263,7 +268,19 @@
         <div class="kv-value"><span class="badge badge-blue">Multi-Tenant Bot</span></div>
 
         <div class="kv-label">Auth Mechanism</div>
-        <div class="kv-value">Client Secret (App Password) <span class="badge badge-orange">DDn8Q~Oyi39ky…</span></div>
+        <div class="kv-value">
+          <span class="badge badge-green">Certificate-Based</span>
+          <span style="font-size:0.82rem; color:#718096; margin-left:6px;">Thumbprint: <code>23F110026C2AEF0D03A50543A71FA0C75245A5F7</code></span>
+        </div>
+
+        <div class="kv-label">Cert Expiry</div>
+        <div class="kv-value"><code>2028-03-26</code></div>
+
+        <div class="kv-label">Cert Files</div>
+        <div class="kv-value"><code>workspace/certs/revin-bot.cer</code> &amp; <code>revin-bot.key</code></div>
+
+        <div class="kv-label">Bot Email</div>
+        <div class="kv-value"><code>matt.hills.bot@rev.io</code> <span class="badge badge-teal">M365 / Entra Licensed</span></div>
       </div>
     </div>
   </div>
@@ -306,6 +323,63 @@
 
         <div class="kv-label">WebApp Resource</div>
         <div class="kv-value"><code>api://botid-d5424673-5dbd-4c2b-abfd-a38e16954789</code></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Azure AD Application Permissions -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🛡️</span>
+      <h2>Azure AD Application Permissions (Admin Consent Granted)</h2>
+    </div>
+    <div class="section-body">
+      <div class="info-box">
+        These are <strong>Application-type</strong> permissions granted via admin consent in Azure Portal → App registrations → Grant admin consent for Rev.io. They enable the bot to call Microsoft Graph API autonomously (no delegated user sign-in required).
+      </div>
+      <table class="perm-table">
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Type</th>
+            <th>What it enables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="perm-name">AppCatalog.ReadWrite.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Manage the Teams app catalog — publish, update, and remove apps</td>
+          </tr>
+          <tr>
+            <td class="perm-name">User.Read.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Look up any user in the tenant by ID, UPN, or display name</td>
+          </tr>
+          <tr>
+            <td class="perm-name">TeamsAppInstallation.ReadWriteForUser.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Install, upgrade, and remove apps for any user's personal scope</td>
+          </tr>
+          <tr>
+            <td class="perm-name">TeamsAppInstallation.ReadWriteForTeam.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Install, upgrade, and remove apps in any team</td>
+          </tr>
+          <tr>
+            <td class="perm-name">TeamsAppInstallation.ReadWriteForChat.All</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Install, upgrade, and remove apps in any group chat</td>
+          </tr>
+          <tr>
+            <td class="perm-name">Chat.Create</td>
+            <td><span class="badge badge-orange">Application</span></td>
+            <td class="perm-desc">Create new group chats programmatically via Graph API</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="warning-box">
+        <strong>⚠️ Permissions Policy:</strong> Least-privilege only. New permissions must be explicitly requested and justified — never added speculatively. Each addition above was granted for a specific use case.
       </div>
     </div>
   </div>
@@ -431,7 +505,7 @@
   <div class="section">
     <div class="section-header">
       <span class="section-icon">🧩</span>
-      <h2>Plugin & Runtime Stack</h2>
+      <h2>Plugin &amp; Runtime Stack</h2>
     </div>
     <div class="section-body">
       <div class="arch-grid">
@@ -502,14 +576,17 @@
     </div>
     <div class="section-body">
       <div class="kv-grid">
-        <div class="kv-label">Group Chat Session</div>
-        <div class="kv-value"><code>agent:main:msteams:group:19:942c7bacddf245698c54ff8ef489ea25@thread.v2</code></div>
+        <div class="kv-label">Group Chat (Engineering Leadership)</div>
+        <div class="kv-value"><code>agent:main:msteams:group:19:21598542fc114fd28a1c04b83ea6ab78@thread.v2</code></div>
+
+        <div class="kv-label">Group Chat (General)</div>
+        <div class="kv-value"><code>agent:main:msteams:group:19:meeting_OGM5MmEyNjktNzc1Ny00ZGJiLTg5OTQtODdjYzMxZDFjZWY3@thread.v2</code></div>
 
         <div class="kv-label">DM Session (Matt)</div>
         <div class="kv-value"><code>agent:main:msteams:direct:ef228265-0337-45ae-b980-8476db194663</code></div>
 
         <div class="kv-label">Bot Email</div>
-        <div class="kv-value"><code>matt.hills.bot@rev.io</code> (M365 / Entra licensed)</div>
+        <div class="kv-value"><code>matt.hills.bot@rev.io</code> <span class="badge badge-teal">M365 / Entra Licensed</span></div>
       </div>
     </div>
   </div>
@@ -561,8 +638,8 @@
 </html>
 </div>
 <script>
-  const HASH = '8e2fec13a15477687a9dd353cab69cc46b631e33dce40a65c10ac80e4632fe7e';
-  const SK = '8e2fec13';
+  const HASH = '94b4c18f2bdc433bd02e908baa9958e18019ee92e312f92978762deb0caf6f3e';
+  const SK = '94b4c18f';
   async function checkAuth() {
     const v = document.getElementById('pw-input').value;
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
