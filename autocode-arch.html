@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Factory — Architecture & Usage Guide</title>
+  <style>
+    #auth-overlay {
+      position: fixed; inset: 0; background: #0d1117;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 99999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #auth-box {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 12px; padding: 40px; width: 360px; text-align: center;
+    }
+    #auth-box h2 { color: #e6edf3; margin: 0 0 8px; font-size: 20px; }
+    #auth-box p { color: #8b949e; font-size: 14px; margin: 0 0 24px; }
+    #auth-box input {
+      width: 100%; box-sizing: border-box; padding: 10px 14px;
+      border-radius: 6px; border: 1px solid #30363d; background: #0d1117;
+      color: #e6edf3; font-size: 15px; margin-bottom: 12px; outline: none;
+    }
+    #auth-box input:focus { border-color: #00c7b1; }
+    #auth-box button {
+      width: 100%; padding: 10px; background: #00c7b1; color: #0d1117;
+      border: none; border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    #auth-box button:hover { opacity: 0.85; }
+    #auth-error { color: #f85149; font-size: 13px; margin-top: 8px; display: none; }
+    #protected-content { display: none; }
+  </style>
+</head>
+<body>
+<div id="auth-overlay">
+  <div id="auth-box">
+    <h2>🔒 Protected</h2>
+    <p>Enter the password to continue.</p>
+    <input type="password" id="pw-input" placeholder="Password" autofocus
+      onkeydown="if(event.key==='Enter') checkAuth()">
+    <button onclick="checkAuth()">Unlock →</button>
+    <div id="auth-error">Incorrect password.</div>
+  </div>
+</div>
+<div id="protected-content"><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Factory — Architecture & Usage Guide</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  header { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 40px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-right: 8px; }
+  .badge-blue { background: #1f3a5f; color: var(--accent); }
+  .badge-green { background: #1a3a2a; color: var(--green); }
+  .badge-yellow { background: #3a2e00; color: var(--yellow); }
+  h1 { font-size: 32px; font-weight: 700; margin: 16px 0 8px; }
+  .subtitle { color: var(--muted); font-size: 16px; }
+  h2 { font-size: 22px; font-weight: 600; margin: 40px 0 16px; color: var(--accent); border-left: 3px solid var(--accent); padding-left: 12px; }
+  h3 { font-size: 17px; font-weight: 600; margin: 24px 0 10px; color: var(--orange); }
+  p { margin-bottom: 12px; color: var(--text); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; }
+  .card-title { font-weight: 600; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; background: #1c2128; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--orange); }
+  pre { background: #1c2128; border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 1.7; margin: 16px 0; }
+  pre .comment { color: #6e7681; }
+  pre .string { color: var(--green); }
+  pre .keyword { color: var(--purple); }
+  pre .num { color: var(--orange); }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .flow-step { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: 500; }
+  .flow-arrow { color: var(--muted); font-size: 18px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th { background: var(--surface); text-align: left; padding: 10px 14px; border: 1px solid var(--border); color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.05em; }
+  td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: #1c2128; }
+  .exit-0 { color: var(--green); font-weight: 600; }
+  .exit-1 { color: var(--yellow); font-weight: 600; }
+  .exit-2 { color: var(--red); font-weight: 600; }
+  .exit-3 { color: var(--red); font-weight: 600; }
+  .exit-5 { color: var(--purple); font-weight: 600; }
+  ul, ol { padding-left: 20px; margin: 12px 0; }
+  li { margin: 6px 0; }
+  .formula { background: #1c2128; border: 1px solid #2d4a7a; border-radius: 8px; padding: 16px 20px; font-family: 'SF Mono', monospace; font-size: 14px; margin: 16px 0; color: var(--accent); }
+  .section-divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  .tip { background: #1a3a2a; border: 1px solid #2ea043; border-radius: 8px; padding: 14px 18px; margin: 16px 0; }
+  .tip-label { color: var(--green); font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  .warn { background: #3a2e00; border: 1px solid #9e6a03; border-radius: 8px; padding: 14px 18px; margin: 16px 0; }
+  .warn-label { color: var(--yellow); font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 60px; color: var(--muted); font-size: 13px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <span class="badge badge-blue">Internal</span>
+  <span class="badge badge-green">Rev.io Engineering</span>
+  <span class="badge badge-yellow">Draft</span>
+  <h1>⚙️ Code Factory</h1>
+  <p class="subtitle">Autonomous Software Engineering — Architecture & Usage Guide</p>
+  <p style="color:var(--muted); font-size:13px; margin-top:12px;">Last updated: March 2026 · Maintained by Revin (AI Engineering Assistant)</p>
+</header>
+
+<h2>What Is Code Factory?</h2>
+<p>Code Factory is an autonomous software engineering system that takes a goal (defined in a <code>program.md</code> file) and iteratively improves a codebase until that goal is met — without human intervention in the loop.</p>
+<p>It is <strong>not</strong> AI-assisted coding (Cursor, Copilot, Claude Code in chat). It is <strong>AI-owned coding</strong>: the agent reads the spec, breaks down work, writes code, runs tests, scores the result, and decides whether to keep or revert each change — autonomously.</p>
+
+<div class="card">
+  <div class="card-title">Core Principle</div>
+  <p><strong>Humans are the interrupt.</strong> The agent runs until blocked, then pings a human. Everything else — writing, testing, scoring, reverting — happens without you.</p>
+</div>
+
+<hr class="section-divider">
+
+<h2>System Architecture</h2>
+
+<div class="flow">
+  <div class="flow-step">📄 program.md</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">✅ validate-program.js</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">📸 scorer.js (baseline)</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">🔁 supervisor.js start</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">⚙️ loop.js --agent</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">🤖 agent.js (Claude Code)</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">📊 scorer.js (score)</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step">keep / revert</div>
+</div>
+
+<h3>Components</h3>
+
+<table>
+  <tr><th>File</th><th>Role</th></tr>
+  <tr><td><code>program.md</code></td><td>The spec. Defines goal, success criteria (T1/T2), test commands, scoring target, constraints. Lives in the target repo root.</td></tr>
+  <tr><td><code>validate-program.js</code></td><td>Pre-flight check. Validates program.md structure before any agent work begins. Exits with code 3 (bootstrap) if baseline is missing.</td></tr>
+  <tr><td><code>scorer.js</code></td><td>Measures code quality via three signals: mutation testing, behavior delta (test pass rate), and complexity. Outputs a single <code>code_bpb</code> score.</td></tr>
+  <tr><td><code>loop.js</code></td><td>Runs ONE iteration: invokes agent, scores before/after, keeps or reverts the change, updates session state.</td></tr>
+  <tr><td><code>agent.js</code></td><td>Routes each task to the right model (local Qwen for small changes, Claude Code for architecture-level). Builds the prompt from program.md + history.</td></tr>
+  <tr><td><code>supervisor.js</code></td><td>Revin's control layer. Monitors health, adjusts check-in cadence, detects dead sessions, sends steering messages, proposes program.md amendments.</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2>The Scoring Formula</h2>
+
+<div class="formula">
+code_bpb = (mutation × 0.50) + (behavior × 0.40) + (complexity × 0.10)
+</div>
+
+<table>
+  <tr><th>Signal</th><th>Weight</th><th>What it measures</th><th>How</th></tr>
+  <tr><td><strong>Mutation</strong></td><td>50%</td><td>Does the test suite catch real bugs?</td><td>Stryker (JS) or mutmut (Python) — kills mutants</td></tr>
+  <tr><td><strong>Behavior</strong></td><td>40%</td><td>Did the change break anything?</td><td>Test suite pass rate vs locked baseline</td></tr>
+  <tr><td><strong>Complexity</strong></td><td>10%</td><td>Did the code get simpler or more complex?</td><td><code>python3 -m lizard</code> cyclomatic complexity delta</td></tr>
+</table>
+
+<p>Score range: <code>0.0</code> (terrible) → <code>1.0</code> (perfect). A keep requires the score to improve or hold. A regression triggers an automatic revert.</p>
+
+<hr class="section-divider">
+
+<h2>Loop Exit Codes</h2>
+
+<table>
+  <tr><th>Code</th><th>Meaning</th><th>Action</th></tr>
+  <tr><td><span class="exit-0">0 — keep</span></td><td>Iteration improved the score</td><td>Commit the change, run next iteration</td></tr>
+  <tr><td><span class="exit-1">1 — discard</span></td><td>No improvement but no regression</td><td>Revert, try different approach</td></tr>
+  <tr><td><span class="exit-2">2 — revert</span></td><td>Behavior regression (tests broke)</td><td>Hard revert, log failure reason</td></tr>
+  <tr><td><span class="exit-2">3 — halt</span></td><td>Too many consecutive reverts OR budget exceeded</td><td>Stop loop, alert human</td></tr>
+  <tr><td><span class="exit-5">5 — done</span></td><td>All T1 criteria met + target score reached</td><td>🎉 Create PR, notify human</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2>program.md — The Spec Format</h2>
+
+<p>Every Code Factory session needs a <code>program.md</code> in the repo root. Here's the required structure:</p>
+
+<pre>
+<span class="comment"># Program: &lt;short title&gt;</span>
+
+<span class="comment">## Goal</span>
+One paragraph describing what needs to be built or fixed.
+
+<span class="comment">## Background / Domain Context</span>
+Explain the codebase, relevant files, domain terms, constraints the agent
+needs to understand before touching anything.
+
+<span class="comment">## Scoring</span>
+code_bpb = (mutation × 0.50) + (behavior × 0.40) + (complexity × 0.10)
+<span class="keyword">target_code_bpb: 0.55</span>
+<span class="keyword">weights: {mutation:0.50, behavior:0.40, complexity:0.10}</span>
+
+<span class="comment">## Constraints</span>
+<span class="keyword">API budget: $10.00</span>
+<span class="keyword">Max diff per iteration: 300 lines</span>
+<span class="keyword">Language: Python, TypeScript</span>
+<span class="keyword">Protected test files: packages/backend/tests/**, src/**/*.test.*</span>
+
+- Do NOT rename existing public APIs
+- Do NOT add new endpoints without flagging for human review
+
+<span class="comment">## Success Criteria</span>
+<span class="comment"># T1 = required, must pass before merge</span>
+<span class="comment"># T2 = stretch goals, optional</span>
+- [T1] The thing that absolutely must happen
+- [T1] All existing tests still pass
+- [T2] Nice-to-have improvement
+
+<span class="comment">## Atomic Decomposition</span>
+### Phase 1 — Backend
+**Files:** src/app/api/v1/foo.py
+
+1. Do X
+2. Do Y
+
+### Phase 2 — Frontend
+...
+
+<span class="comment">## Test Commands</span>
+```bash
+cd packages/backend && uv run pytest tests/ -v
+```
+
+<span class="comment">## Impossibility Constraints</span>
+- If X is zero, do not divide — return None
+- Never expose field Y to unauthenticated callers
+</pre>
+
+<div class="tip">
+  <div class="tip-label">✅ Tip: Run validate-program.js first</div>
+  <p>Always validate before starting a session. It catches missing labels, undefined targets, missing protected file declarations, and broken test suites before the agent wastes API budget on a broken baseline.</p>
+</div>
+
+<hr class="section-divider">
+
+<h2>End-to-End Workflow</h2>
+
+<h3>Step 1 — Write program.md</h3>
+<p>Write a <code>program.md</code> in the target repo root. Use the Socratic process: interrogate requirements, define T1/T2 criteria explicitly, identify protected files and impossibility constraints before writing a line of code.</p>
+
+<h3>Step 2 — Validate</h3>
+<pre>node /path/to/autocode/validate-program.js --program program.md --repo .</pre>
+<p>Must exit with 0 errors before proceeding. Bootstrap mode (exit 3) is expected on first run — it means baseline hasn't been captured yet.</p>
+
+<h3>Step 3 — Capture Baseline</h3>
+<pre>node /path/to/autocode/scorer.js capture-baseline \
+  --repo /path/to/repo \
+  --test-command "cd packages/backend && uv run pytest tests/ -v" \
+  --output /path/to/autocode/sessions/&lt;session-id&gt;/behavior-baseline.json</pre>
+<p>This locks in the current test pass rate. Any future change that breaks below this gets auto-reverted.</p>
+
+<div class="warn">
+  <div class="warn-label">⚠️ Pre-existing failures</div>
+  <p>If the test suite already has failures, scope the test command to only the passing tests. Code Factory scores <em>relative to baseline</em> — it can't fix what was already broken. A separate session should address pre-existing failures first.</p>
+</div>
+
+<h3>Step 4 — Initialize Supervisor</h3>
+<pre>node /path/to/autocode/supervisor.js start \
+  --program /path/to/repo/program.md \
+  --repo /path/to/repo \
+  --session &lt;session-id&gt;</pre>
+<p>This initializes the session state and sets the first check-in time (default: 30 minutes).</p>
+
+<h3>Step 5 — Run the Loop</h3>
+<pre>cd /path/to/repo && node /path/to/autocode/loop.js \
+  --program program.md \
+  --repo . \
+  --session &lt;session-id&gt; \
+  --agent \
+  --baseline /path/to/sessions/&lt;session-id&gt;/behavior-baseline.json \
+  --results /path/to/sessions/&lt;session-id&gt;/results.tsv \
+  --effort medium</pre>
+<p>Each invocation is one iteration. The loop scores before/after, keeps or reverts, and exits with a code indicating what happened. To run continuously, call it in a shell loop or via supervisor.</p>
+
+<h3>Step 6 — Monitor</h3>
+<pre><span class="comment"># Check session status</span>
+node supervisor.js status --session &lt;session-id&gt;
+
+<span class="comment"># View results log</span>
+cat sessions/&lt;session-id&gt;/results.tsv
+
+<span class="comment"># Send steering message</span>
+node supervisor.js steer --session &lt;session-id&gt; --message "Focus on the forecast.py file first"</pre>
+
+<h3>Step 7 — PR on Completion</h3>
+<p>When the loop exits with code 5 (done), all T1 criteria are met. At that point:</p>
+<ol>
+  <li>Review the kept-attempts diffs in <code>sessions/&lt;id&gt;/kept-attempts/</code></li>
+  <li>Push the branch and open a PR</li>
+  <li>Code Factory's changes are committed on the feature branch — reviewer sees clean incremental commits</li>
+</ol>
+
+<hr class="section-divider">
+
+<h2>Model Routing</h2>
+
+<p>The agent routes each task to the cheapest model that can handle it:</p>
+
+<table>
+  <tr><th>Condition</th><th>Model</th><th>Why</th></tr>
+  <tr><td>≤ 3 files, no cross-file reasoning</td><td>Local Qwen 2.5-Coder-7B</td><td>Fast, free, good for focused edits</td></tr>
+  <tr><td>&gt; 3 files OR architecture-level changes</td><td>Claude Code (Sonnet)</td><td>Stronger reasoning for complex refactors</td></tr>
+</table>
+
+<p>Re-anchoring happens every 10 iterations — the full <code>program.md</code> + last 5 results rows are injected to reset the agent's working memory and prevent drift.</p>
+
+<hr class="section-divider">
+
+<h2>Session Directory Structure</h2>
+
+<pre>
+projects/autocode/
+  sessions/&lt;session-id&gt;/
+    behavior-baseline.json   <span class="comment"># locked test baseline</span>
+    loop-state.json          <span class="comment"># current iteration state</span>
+    checkin-state.json       <span class="comment"># supervisor check-in schedule</span>
+    results.tsv              <span class="comment"># per-iteration scores</span>
+    health.json              <span class="comment"># model server health</span>
+    kept-attempts/           <span class="comment"># diffs that improved score</span>
+    failed-attempts/         <span class="comment"># diffs that were reverted + reason</span>
+    pending-amendments.md    <span class="comment"># proposed program.md changes</span>
+    steering.md              <span class="comment"># steering messages from human</span>
+  history/
+    &lt;repo-slug&gt;/
+      history.tsv            <span class="comment"># warm-start log across sessions</span>
+</pre>
+
+<hr class="section-divider">
+
+<h2>Supervisor Check-in Cadence</h2>
+
+<p>The supervisor adapts its check-in frequency based on session health:</p>
+
+<table>
+  <tr><th>Condition</th><th>Interval change</th></tr>
+  <tr><td>Healthy + progressing</td><td>× 1.25 (up to 90 min max)</td></tr>
+  <tr><td>Stuck (score not improving)</td><td>× 0.75 (down to 10 min min)</td></tr>
+  <tr><td>Score drift &gt; 2× expected</td><td>Check immediately</td></tr>
+  <tr><td>No results.tsv update for 30 min</td><td>Session declared dead → alert</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2>Key Design Decisions</h2>
+
+<ul>
+  <li><strong>Loop is stateless per invocation</strong> — each call to loop.js reads state from disk and writes back. No long-running process to babysit.</li>
+  <li><strong>Hard behavior gate</strong> — any change that breaks the baseline test suite is auto-reverted, no exceptions. The agent cannot ship a regression.</li>
+  <li><strong>Protected test files</strong> — the agent cannot modify test files declared as protected. This prevents it from "gaming" the score by weakening tests.</li>
+  <li><strong>Warm-start compression</strong> — history across sessions is compressed to ≤500 tokens so the agent learns from past failures without burning context.</li>
+  <li><strong>Budget enforcement</strong> — each session has a dollar cap. Loop halts when exceeded, preventing runaway costs.</li>
+</ul>
+
+<hr class="section-divider">
+
+<h2>Current Session: devlake-capacity-v1</h2>
+
+<div class="card">
+  <div class="card-title">Active Session</div>
+  <p><strong>Goal:</strong> Add per-member capacity goals to the Forecast page in revio-devlake</p>
+  <p><strong>Branch:</strong> <code>feature/per-member-capacity-goals</code></p>
+  <p><strong>Baseline:</strong> 6/6 tests passing (scoped — pre-existing failures excluded)</p>
+  <p><strong>Target score:</strong> 0.55 code_bpb</p>
+  <p><strong>Budget:</strong> $10.00</p>
+  <p><strong>Key changes:</strong> Fix <code>_NON_IC_ROLES</code> bug, add <code>per_member_share</code> / <code>goal_points</code> to MemberCapacity schema, add Individual tab to Forecast page UI</p>
+</div>
+
+<footer>
+  <p>Code Factory · Rev.io Engineering · Built by Revin (AI) + Matt Hills</p>
+  <p style="margin-top:6px;">For questions, reach Matt Hills (VP Engineering) or ping Revin directly.</p>
+</footer>
+
+</div>
+</body>
+</html>
+</div>
+<script>
+  const HASH = '8e2fec13a15477687a9dd353cab69cc46b631e33dce40a65c10ac80e4632fe7e';
+  const SK = '8e2fec13';
+  async function checkAuth() {
+    const v = document.getElementById('pw-input').value;
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+    const h = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (h === HASH) {
+      document.getElementById('auth-overlay').remove();
+      document.getElementById('protected-content').style.display = 'block';
+      sessionStorage.setItem('auth_'+SK, '1');
+    } else {
+      document.getElementById('auth-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+    }
+  }
+  if (sessionStorage.getItem('auth_'+SK)==='1') {
+    document.getElementById('auth-overlay').remove();
+    document.getElementById('protected-content').style.display = 'block';
+  }
+</script>
+</body>
+</html>
